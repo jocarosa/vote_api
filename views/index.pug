@@ -1,0 +1,324 @@
+html( lang="en" )
+    head
+        title= title
+        meta( charset='utf-8' )
+        meta( http-equiv='X-UA-Compatible', content='IE=edge' )
+        meta( name='viewport', content='width=device-width, initial-scale=1.0' )
+        meta( name='description', content='Baking Bootstrap Snippets with Jade' )
+        //- Bootswatch Theme
+        link(href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css", rel="stylesheet")
+        
+        
+    
+        .container
+ 
+style
+         include ../public/css/main.css
+    
+    
+
+body
+if username==""
+   
+    nav.navbar.navbar-inverse
+        .container-fluid
+          .navbar-header
+           a.navbar-brand(href='#') API VOTACIONES
+          ul.nav.navbar-nav
+             li.active
+               a(href='/') Todas las Encuestas
+             
+             li
+               a(href='/auth/twitter') Login 
+            
+else            
+   nav.navbar.navbar-inverse
+      .container-fluid
+        .navbar-header
+          a.navbar-brand(href='#') API VOTACIONES
+        ul.nav.navbar-nav
+          li.active
+            a(href='/') Todas las Encuestas
+          
+          li.dropdown
+            a.dropdown-toggle(data-toggle='dropdown', href='#')
+              | Bienvenido! #{username}
+              span.caret
+            ul.dropdown-menu
+              li
+                a(href='/logout') Cerrar Sesion
+            
+          li
+              <a class="styletwitter" class="twitter-share-button" href="https://twitter.com/intent/tweet?text=https://vote2-jocarosa.c9users.io/">Compartir</a>
+   
+
+                    
+if username!="" && !pollSelected                  
+    .containerbutton
+         a.stylebutton(href="/new") + Nueva Encuesta
+         a.stylebutton2(href="/self") Mis Encuestas
+
+if owner=="owner"        
+    .containerbutton
+         a.stylebutton(href="/new") + Nueva Encuesta
+         a.stylebutton2(href="/self") Mis Encuestas     
+         a.stylebutton3(href="/erase/"+pollSelected.id) Borrar x encuesta 
+   
+         
+if pollSelected
+     
+    #containerChart
+            <canvas id="chart" width="100" height="100"></canvas>
+            
+            if owner=="owner"  
+                
+                #contenedoropt    
+                    form(id="formopt",action='/update', method='post')   
+                        input(type='text', name='op1', placeholder='Nueva Opcion')
+                        input(type='text', name='op2',placeholder='Nueva Opcion') 
+                        input(type='text', name='op3',placeholder='Nueva Opcion')
+                        input(type='hidden', name='idpoll', value=pollSelected.id)
+                        input.stylebutton5(id='btnactualizar',type='submit', value='Actualizar')
+   
+    #containermainencuestas
+      
+                                       
+            img( style=displai, id='imgfinger',src='../public/img/senala.gif')
+            
+            
+            form( style=displai ,id='frmradio', action='/pooling', method="post")
+                table#tablavoto
+                    tr
+                        td(colspan='2')
+                           
+                             h3 #{pollSelected.title}
+                        
+                    tr
+                            
+                            - var titles = [];
+                            - var options = [];
+                            each opt in pollSelected.options
+                                 tr 
+                                    td
+                                        input(type='radio', name= 'vote', value= opt.id)
+                                        
+                                    td
+                                         | #{opt.title}
+                                         - titles.push(opt.title)
+                                         - options.push(opt.vote)    
+                            td(colspan='2')
+                                input(class='btnvoto' type='submit',align="right", value='VOTAR' name='btnvotar') 
+                       
+                    input#titles(type='hidden', value=titles)  
+                    input#options(type='hidden', value=options)
+                    input(type='hidden', name='id_poll' value=pollSelected.id) 
+                        
+    
+           
+            h1#messagepoll #{messagepoll}  
+              
+
+if message
+    #containermainencuestas  
+        h3 #{message} 
+        a(href='/') aqui
+        
+if allpolls 
+    #containermainencuestas  
+        
+                h1  #{mypoll} Encuestas
+        
+        
+                each item in allpolls
+      
+                 
+                    a(href='/pool/'+item._id) 
+                        .containerpolls #{item.title} 
+                            img.imgpoll(src='../public/img/poll_img.gif')
+                            br
+                   
+if nuevo
+    
+    #containerformnew    
+            h1 Nueva Encuesta            
+                form(id="formnew",action='/newpost', method='post')
+                    
+                     
+                    .added
+                    table 
+                        tr 
+                            td
+                                input(type='text', name='title', placeholder='Titulo Encuesta', required)
+                            td  
+                                a#agregarCampo.btn.btn-info(href='#') Agregar Opcion
+                            td
+                                input.stylebutton2(type='submit', value='Guardar')
+                        tr
+                            td#lblopcion
+                                | Opciones
+                        tr 
+                            td
+                                input#campo_1(type='text', name='mitexto', placeholder='opcion 1', required) 
+                        tr    
+                            td 
+                                input#campo_2(type='text', name='mitexto', placeholder='opcion 2' ,required) 
+                        tr   
+                            td
+                                #contenedor
+                        
+                                
+                    
+                    
+                    
+                     
+                    
+        
+  
+script( src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js' )
+script( src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' )
+script(src='//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js')     
+
+
+script.
+    $('.dropdown-toggle').dropdown()      
+
+
+
+            $( document ).ready(function() {
+                    
+                    var MaxInputs       = 3; 
+                    var contenedor       = $("#contenedor"); 
+                    var AddButton       = $("#agregarCampo"); 
+                    
+                   
+                    var x = $("#contenedor div").length + 1;
+                    var FieldCount = x-1; //para el seguimiento de los campos
+
+                    $(AddButton).click(function (e) {
+                      if(x <= MaxInputs) //max input box allowed
+                        {
+                        FieldCount++;
+                        
+                         $(contenedor).append('<div><input class="txtappend" type="text" name="mitexto" id="campo_'+ FieldCount +'"/><a href="#" class="eliminar">&times;</a></div>');
+                            x++; //text box increment
+                          }
+                        return false;
+                            });
+
+                        $("body").on("click",".eliminar", function(e){ //click en eliminar campo
+                        if( x > 1 ) {
+                        $(this).parent('div').remove(); //eliminar el campo
+                        x--;
+                        }
+                        return false;
+                         });
+            
+                            
+        
+        
+                    var pathname = window.location.pathname; 
+                        
+                                   
+                                   
+                                    $.get(pathname,function(d){
+                                   
+                                   
+                                     
+                                   
+                                    
+                                    var arraytitles     =JSON.parse($( "#titles" ).val());
+                                    var arrayoptions    =JSON.parse($( "#options" ).val())   
+                                    var ctx             =$("#chart");
+                                    var arrayColors     =getColors(arraytitles.length);
+                                    
+                                function getColors(noColors){
+                                        var color=[];
+                                        
+                                        for(i=0;i<noColors;i++){
+                                        color.push('#'+Math.floor(Math.random()*16777215).toString(16))
+                                        }
+                                        
+                                        return color;
+                                }
+                            
+                                
+                                
+                                
+                                    var data = {
+                                labels:arraytitles,
+                                
+                                datasets: [
+                                {
+                                data: arrayoptions,
+                                backgroundColor: arrayColors
+                                }]
+                            };
+                             
+                             
+                             var options = {
+                            animateRotate: true
+                            };
+                           
+                             var myDoughnutChart = new Chart(ctx, {
+                                    type: 'doughnut',
+                                    data: data,
+                                    options:options
+                                    });
+                                    
+                                });
+                                
+                            
+                            var btn     =    $('input[name=btnvotar]');
+                            btn.prop('disabled',true);
+                            btn.attr('class','btndisabled');
+                           
+                            $('#frmradio input').on('change', function() {
+                            
+                              btn     =    $('input[name=btnvotar]'); 
+                            var radio   =  $("input[name=vote]:checked");
+                          
+                           if (radio)
+                            btn.prop('disabled',false);
+                            btn.attr('class','btnvoto');
+                                
+                            });    
+                               
+                                $('.stylebutton3').click(function(){
+                                    
+                                    if (confirm('Desea realmente eliminar esta encuesta?')) {
+                                      return true;
+                             } else {
+                                        return false;
+                            }    
+                                })
+                                
+                               $('#btnactualizar').attr('disabled',true);
+                               $('#btnactualizar').attr('class','stylebutton5disabled');
+                           
+                           $("#formopt").each(function(){
+                            $(this).find(':input').keyup(function(){
+                               if($(this).val()!=""){
+                                    $('#btnactualizar').attr('class','stylebutton5')
+                                    $('#btnactualizar').attr('disabled',false);
+                               }else{
+                                   $('#btnactualizar').attr('class','stylebutton5disabled');
+                                   $('#btnactualizar').attr('disabled',true);
+                               }
+                                
+                            }) //<-- Should return all input elements in that specific form.
+                            
+                               
+                           });   
+                           twttr.widgets.createShareButton(
+                            'https://dev.twitter.com/',
+                            document.getElementById('linktwitter'),
+                            {
+                            text: 'Hello World'
+                                }
+                            );
+                                
+                       });
+            
+                      
+                    
+                    
