@@ -1,17 +1,17 @@
 'use strict';
 
-var path = process.cwd();
-var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
+var path			= process.cwd();
+var ClickHandler	= require(path + '/app/controllers/clickHandler.server.js');
+var bodyParser		= require('body-parser');
+var cookieParser	= require('cookie-parser');
 
 
 
 module.exports = function (app, passport) {
 
 app.set('view engine', 'pug');
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cookieParser());
 
 	function isLoggedIn (req, res, next) {
@@ -30,11 +30,11 @@ app.use(cookieParser());
 	
 	app.route('/')
 		.get(objHandler.getPolls);
-		//.post(isLoggedIn,clickHandler.addPolls);
+		
 
 	app.route('/self')
 		.get(isLoggedIn,objHandler.getMyPolls);
-		//.post(isLoggedIn,clickHandler.addPolls);
+		
 	
 	
 	app.route('/erase/:id')
@@ -50,7 +50,7 @@ app.use(cookieParser());
 	.get(isLoggedIn,function(req,res){
 		res.render('index',{username:req.user.twitter.displayName,nuevo:true});
 		
-	})
+	});
 	app.route('/newpost')
 	.post(isLoggedIn,objHandler.addPolls);
 	
@@ -67,8 +67,6 @@ app.use(cookieParser());
 
 	app.route('/auth/twitter')
 		.get(passport.authenticate('twitter'));
-		
-	
 		
 
 	app.route('/auth/twitter/callback')

@@ -1,5 +1,5 @@
-var Poll=	require('../models/poll.js');
-var	Person = require('../models/person.js');
+var Poll	=	require('../models/poll.js');
+var	Person	= require('../models/person.js');
 var shortid = require('shortid');
 
 
@@ -8,18 +8,18 @@ function ClickHandler () {
  
 
 this.update=function(req,res){
-	var arraycontenedor=[];
+	
  	var arrayopciones;
- 	
- 	var op1= req.body.op1;
- 	var op2= req.body.op2;
- 	var op3= req.body.op3;
- 	var id_poll=req.body.idpoll;
- 	//var idvote=req.body.idvote;
+ 	var arraycontenedor = [];
+ 	var op1				= req.body.op1;
+ 	var op2				= req.body.op2;
+ 	var op3				= req.body.op3;
+ 	var id_poll			= req.body.idpoll;
+ 
  	
 	function addelement(element){
- arrayopciones={title:element,vote:0}; 
- arraycontenedor.push(arrayopciones); 
+		arrayopciones={title:element,vote:0}; 
+		arraycontenedor.push(arrayopciones); 
 	}
 
 	
@@ -34,94 +34,76 @@ this.update=function(req,res){
         }else{
                 console.log("Successfully added");
         }
-});
+	});
 
 
-res.redirect('/pool/'+id_poll);
+	res.redirect('/pool/'+id_poll);
 
- 
-
-
-}  
+};  
    
    
    
 this.pooling=function(req,res){
-	var id_vote		=req.body.vote;
-	var idPoll		=req.body.id_poll;
+	
+	var id_vote		= req.body.vote;
+	var idPoll		= req.body.id_poll;
 	var iduser		= req.cookies.id;
-//console.log(iduser+'polling');
+
 
 
 
 	if (typeof req.user !== 'undefined') {
-		iduser		=req.user.twitter.id;//saving users id for never polling again
+		iduser = req.user.twitter.id;//saving users id for never polling again
 	}
 
 
-Poll.update({'options._id': id_vote}, {'$inc': {
-    'options.$.vote': 1
-}}, function(err,doc) {
-
-})
+	Poll.update({'options._id': id_vote}, {'$inc': {
+    	'options.$.vote': 1
+	}}, function(err,doc) {});
 
 
-Poll.findByIdAndUpdate(
-    idPoll,
-    {$push: {idPoller: {id: iduser}}},
-    {safe: true, upsert: true},
-    function(err, model) {
-       
-    }
-);	
+	Poll.findByIdAndUpdate(
+    	idPoll,
+    	{$push: {idPoller: {id: iduser}}},
+    	{safe: true, upsert: true},
+    	function(err, model) {});	
 
-res.redirect('/pool/'+idPoll);
+	res.redirect('/pool/'+idPoll);
 
-	
-	
-	
-}
+};
 
 
 this.addPolls= function(req,res){
 
-		
-	
-// getting user's information
-
-
-			 var username		=req.user.twitter.username;
-			 var displayName	=req.user.twitter.displayName;
-			var  id				=req.user.twitter.id;
- 	  		 
- 	  		 
- 	  		 var titulo			=req.body.title;
- 		     var arraycontenedor=[];
- 			 var arrayopciones;
+		// getting user's information
+	 var username		 = req.user.twitter.username;
+	 var displayName	 = req.user.twitter.displayName;
+     var  id			 = req.user.twitter.id;
+ 	 var titulo			 = req.body.title;
+ 	 var arraycontenedor = [];
+ 	 var arrayopciones;
  			 
- //saving  the options of the poll in  array
- for(var key in req.body.mitexto) {
+	//saving  the options of the poll in  array
+	for(var key in req.body.mitexto) {
  
- arrayopciones={title:req.body.mitexto[key],vote:0}; 
- arraycontenedor.push(arrayopciones); 	  		
- 	  	
+		arrayopciones={title:req.body.mitexto[key],vote:0}; 
+		arraycontenedor.push(arrayopciones); 	  		
  	 
- 	  
  	  }
- //creating new person and poll	  
- var person= new Person({
-	_id			:id,
-	username	: username,
-	displayName	:displayName
-	});
+	
+	//creating new person and poll	  
+	var person= new Person({
+		_id			: id,
+		username	: username,
+		displayName	: displayName
+		});
 	
 	person.save(function(){
 		
-			var poll = new Poll({
-  		
-  		_creator	:person._id,
-    	title		:titulo,
-		options		:arraycontenedor
+		var poll = new Poll({
+  			_creator	: person._id,
+    		title		: titulo,
+			options		: arraycontenedor
 		});
   		
   		poll.save(function (err,doc) {
@@ -218,7 +200,7 @@ this.erasePoll= function(req,res){
   this.getSelected= function(req,res){
   		
   		var displayName='';
-		var iduser;
+		var iduser='';
 		var idPoll=	 req.url.split('/')[2];
 		var mess='Gracias por votar ! Ver otras encuestas ';
 		var style='display:none';
@@ -232,7 +214,7 @@ this.erasePoll= function(req,res){
 		}
 		
 	
-  		if (typeof req.user !== 'undefined') {
+  		if (typeof req.user != 'undefined') {
 		 
 		 displayName		= req.user.twitter.displayName;
 		 iduser				= req.user.twitter.id;
@@ -240,6 +222,7 @@ this.erasePoll= function(req,res){
   		}else{
   				//get id user
 		iduser	=	req.cookies.id;
+		console.log('usercooki');
   		}
 		 	
 		 	
@@ -252,14 +235,7 @@ this.erasePoll= function(req,res){
     			style='';
     				}
 		 		
-		 	
-		 	
-		 	});
-		 
-		
-	
-     	
-     	Poll
+		 	  	Poll
 		.findOne({_id:idPoll})
 		.exec(function (err, ps) {
 		 if (err) return (err);
@@ -280,6 +256,13 @@ this.erasePoll= function(req,res){
     					}); 
    
 		});
+		 	
+		 	});
+		 
+		
+	
+     	
+   
 		
 };
 

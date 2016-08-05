@@ -1,12 +1,13 @@
 'use strict';
 
-//var GitHubStrategy = require('passport-github').Strategy;
+
 var TwitterStrategy  = require('passport-twitter').Strategy;
 
-var User = require('../models/users');
-var configAuth = require('./auth');
+var User		= require('../models/users');
+var configAuth  = require('./auth');
 
 module.exports = function (passport) {
+	
 	passport.serializeUser(function (user, done) {
 		done(null, user.id);
 	});
@@ -16,14 +17,16 @@ module.exports = function (passport) {
 			done(err, user);
 		});
 	});
-
+//
 	passport.use(new TwitterStrategy({
-		consumerKey: configAuth.twitterAuth.clientID,
-		consumerSecret: configAuth.twitterAuth.clientSecret,
-		callbackURL: configAuth.twitterAuth.callbackURL
+	   consumerKey:	configAuth.twitterAuth.clientID,
+	consumerSecret: configAuth.twitterAuth.clientSecret,
+	   callbackURL:	configAuth.twitterAuth.callbackURL
 	},
 	function (token, refreshToken, profile, done) {
+		
 		process.nextTick(function () {
+			
 			User.findOne({ 'twitter.id': profile.id }, function (err, user) {
 				if (err) {
 					return done(err);
@@ -34,9 +37,9 @@ module.exports = function (passport) {
 				} else {
 					var newUser = new User();
 
-					newUser.twitter.id = profile.id;
-					newUser.twitter.token = profile.token;
-					newUser.twitter.username = profile.username;
+					newUser.twitter.id			= profile.id;
+					newUser.twitter.token		= profile.token;
+					newUser.twitter.username	= profile.username;
 					newUser.twitter.displayName = profile.displayName;
 					newUser.save(function (err) {
 						if (err) {
@@ -48,5 +51,6 @@ module.exports = function (passport) {
 				}
 			});
 		});
+		
 	}));
 };
