@@ -1,6 +1,6 @@
 var Poll	=	require('../models/poll.js');
 var	Person	= require('../models/person.js');
-var shortid = require('shortid');
+var shortid = require(__dirname+'shortid');
 
 
 
