@@ -1,6 +1,7 @@
 'use strict';
 
-var ClickHandler	= require('../controllers/clickHandler.server.js');
+var path			= process.cwd();
+var ClickHandler	= require(path + '/app/controllers/clickHandler.server.js');
 var bodyParser		= require('body-parser');
 var cookieParser	= require('cookie-parser');
 
