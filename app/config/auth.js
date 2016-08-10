@@ -9,6 +9,6 @@ module.exports = {
 	'twitterAuth' : {
         'clientID'      : 'BqGBhMaUsdH5bwOQ1kR3DEY4Z',
         'clientSecret'  : 'u19cDASxWAk8jc5Zh3epXumbZ79gvgamLxGHKZ5TNfHQ2mv5Pv',
-        'callbackURL'   : 'https://vote2-jocarosa.c9users.io/auth/twitter/callback'
+        'callbackURL'   : '/auth/twitter/callback'
     }
 };
