@@ -1,6 +1,7 @@
+var shortid =  require('shortid');
 var Poll	=	require('../models/poll.js');
 var	Person	=  require('../models/person.js');
-var shortid =  require('node_modules/shortid');
+
 
 
 
