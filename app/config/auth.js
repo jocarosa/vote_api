@@ -9,6 +9,6 @@ module.exports = {
 	'twitterAuth' : {
         'clientID'      : 'BqGBhMaUsdH5bwOQ1kR3DEY4Z',
         'clientSecret'  : 'u19cDASxWAk8jc5Zh3epXumbZ79gvgamLxGHKZ5TNfHQ2mv5Pv',
-        'callbackURL'   : '/auth/twitter/callback'
+        'callbackURL'   : 'https://pool-jocarosa.herokuapp.com/auth/twitter/callback'
     }
 };
